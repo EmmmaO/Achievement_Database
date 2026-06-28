@@ -20,5 +20,20 @@ FROM Achievements
 WHERE AchievementName LIKE '%Defeated%';
 
 -- COMPARE
+SELECT u.Username, SUM(a.Points) AS TotalPoints
+FROM Users u
+JOIN UserAchievements ua ON u.UserID = ua.UserID
+JOIN Achievements a ON ua.AchievementID = A.AchievementID
+GROUP BY u.UserID
+ORDER BY TotalPoints DESC;
 
 -- COMPLETION PERCENTAGE
+SELECT 
+	u.Username,
+	g.GameName,
+    COUNT(ua.AchievementID) * 100 / COUNT(a.AchievementID) AS CompletionPercent
+    FROM Users u
+    JOIN UserAchievements ua ON u.UserID = ua.UserID
+    JOIN Achievements a ON ua.AchievementID = a.AchievementID
+    JOIN Games g ON a.GameID = g.GameID
+    GROUP BY u.UserID, g.GameID;
