@@ -31,7 +31,7 @@ ORDER BY TotalPoints DESC;
 SELECT 
 	u.Username,
 	g.GameName,
-    COUNT(ua.AchievementID) * 100 / COUNT(a.AchievementID) AS CompletionPercent
+    CompletionPercentage(u.UserID, g.GameID) AS CompletionPercent
     FROM Users u
     JOIN UserAchievements ua ON u.UserID = ua.UserID
     JOIN Achievements a ON ua.AchievementID = a.AchievementID
