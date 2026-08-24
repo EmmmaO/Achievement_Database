@@ -82,6 +82,22 @@
 
     <div id="list" class="list"></div>
 
+    <!-- Achievement search -->
+
+    <div class="achievement-search">
+        <h2>Search Achievements</h2>
+
+        <input
+            type="text"
+            id="achievementSearch"
+            placeholder="Search achievements..."
+            oninput="searchAchievements()"
+        >
+
+        <div id="achievementResults"></div>
+
+    </div>
+
 
     <!-- Add forms -->
 
@@ -164,6 +180,51 @@
 
 
     <script>
+
+        function searchAchievements() {
+            const search = document.getElementById("achievementSearch").value;
+            const results = document.getElementById("achievementResults");
+
+            if(search.trim() === "") {
+                results.innerHTML = "";
+                return;
+            }
+
+            fetch("achievements/search?q=" + encodeURIComponent(search))
+                .then(response => response.json())
+                .then(achievements => {
+
+                    results.innerHTML = "";
+
+                    if(achievements.length === 0) {
+                        results.innerHTML = "<p>No achievements found.</p>";
+                        return;
+                    }
+                    
+                     achievements.forEach(achievement => {
+
+                    results.innerHTML += `
+                        <div class="achievement">
+                            <h3>${achievement.AchievementName}</h3>
+
+                            <p>
+                                ${achievement.Description}
+                            </p>
+
+                            <p>
+                                Game: ${achievement.GameName}
+                            </p>
+
+                            <p>
+                                Points: ${achievement.Points}
+                            </p>
+                        </div>
+                    `;
+
+                });
+
+            });
+        }
 
         function showUsers() {
 

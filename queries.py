@@ -76,12 +76,27 @@ def search_achievements():
     cursor = conn.cursor(dictionary=True)
 
     query = """
-        SELECT *
-        FROM Achievements
-        WHERE AchievementName LIKE %s
+        SELECT
+            a.AchievementID,
+            a.GameID,
+            g.GameName,
+            a.AchievementName,
+            a.Description,
+            a.Points
+        FROM Achievements a
+        JOIN Games g
+            ON a.GameID = g.GameID
+        WHERE a.AchievementName LIKE %s
+           OR a.Description LIKE %s
     """
 
-    cursor.execute(query, ("%" + search + "%",))
+    search_value = "%" + search + "%"
+
+    cursor.execute(
+        query,
+        (search_value, search_value)
+    )
+
     results = cursor.fetchall()
 
     cursor.close()
