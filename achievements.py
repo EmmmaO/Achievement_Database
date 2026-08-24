@@ -10,9 +10,9 @@ def get_achievements():
 
     query = """
         SELECT
-            a.AchievementID
+            a.AchievementID,
             a.GameID,
-            a.GameName,
+            g.GameName,
             a.AchievementName,
             a.Description,
             a.Points
