@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect
 from database import get_db_connection
 
 games_bp = Blueprint("games", __name__)
@@ -49,3 +49,55 @@ def create_game():
         "message": "Game created",
         "GameID": game_id
     }), 201
+
+@games_bp.route("/games/<int:game_id>", methods=["GET"])
+def game_page(game_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT * FROM Games WHERE GameID = %s",
+        (game_id,)
+    )
+
+    game = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if game is None:
+        return "Game not found", 404
+
+    return f"""
+        <h1>{game["GameName"]}</h1>
+        <p>Genre: {game["Genre"]}</p>
+        <p>Release Date: {game["ReleaseDate"]}</p>
+        <p>Game ID: {game["GameID"]}</p>
+
+        <a href="/">Back to home</a>
+    """
+
+@games_bp.route("/games/add", methods=["POST"])
+def add_game():
+    game_name = request.form["GameName"]
+    genre = request.form["Genre"]
+    release_date = request.form["ReleaseDate"]
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        INSERT INTO Games
+        (GameName, Genre, ReleaseDate)
+        VALUES (%s, %s, %s)
+        """,
+        (game_name, genre, release_date)
+    )
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return redirect("/")

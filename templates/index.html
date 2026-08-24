@@ -1,32 +1,219 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Achievement Database</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 40px;
+        }
+
+        button {
+            padding: 12px 25px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .list {
+            margin: 20px auto 50px;
+            width: 400px;
+        }
+
+        .item {
+            display: block;
+            padding: 15px;
+            margin: 5px;
+            background: #eee;
+            text-decoration: none;
+            color: black;
+        }
+
+        .item:hover {
+            background: #ddd;
+        }
+
+        .forms {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 50px;
+        }
+
+        .form-box {
+            border: 1px solid #ccc;
+            padding: 25px;
+            width: 300px;
+        }
+
+        input {
+            display: block;
+            width: 90%;
+            padding: 10px;
+            margin: 10px auto;
+        }
+
+        .submit-button {
+            background: #ddd;
+            border: 1px solid #aaa;
+        }
+    </style>
 </head>
 
 <body>
 
     <h1>Achievement Database</h1>
 
-    <h2>Add User</h2>
+    <!-- Main buttons -->
 
-    <form action="/users/add" method="POST">
-        <input
-            type="text"
-            name="Username"
-            placeholder="Username"
-            required
-        >
+    <button onclick="showUsers()">
+        Users
+    </button>
 
-        <input
-            type="email"
-            name="Email"
-            placeholder="Email"
-            required
-        >
+    <button onclick="showGames()">
+        Games
+    </button>
 
-        <button type="submit">Add User</button>
-    </form>
+
+    <!-- Users/Games list -->
+
+    <div id="list" class="list"></div>
+
+
+    <!-- Add forms -->
+
+    <div class="forms">
+
+        <!-- Add User -->
+
+        <div class="form-box">
+
+            <h2>Add User</h2>
+
+            <form action="/users/add" method="POST">
+
+                <input
+                    type="text"
+                    name="Username"
+                    placeholder="Username"
+                    required
+                >
+
+                <input
+                    type="email"
+                    name="Email"
+                    placeholder="Email"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="submit-button"
+                >
+                    Add User
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- Add Game -->
+
+        <div class="form-box">
+
+            <h2>Add Game</h2>
+
+            <form action="/games/add" method="POST">
+
+                <input
+                    type="text"
+                    name="GameName"
+                    placeholder="Game name"
+                    required
+                >
+
+                <input
+                    type="text"
+                    name="Genre"
+                    placeholder="Genre"
+                    required
+                >
+
+                <input
+                    type="date"
+                    name="ReleaseDate"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="submit-button"
+                >
+                    Add Game
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        function showUsers() {
+
+            fetch("/users")
+                .then(response => response.json())
+                .then(users => {
+
+                    let list = document.getElementById("list");
+
+                    list.innerHTML = "<h2>Users</h2>";
+
+                    users.forEach(user => {
+
+                        list.innerHTML += `
+                            <a class="item"
+                               href="/users/${user.UserID}">
+                                ${user.Username}
+                            </a>
+                        `;
+
+                    });
+                });
+        }
+
+
+        function showGames() {
+
+            fetch("/games")
+                .then(response => response.json())
+                .then(games => {
+
+                    let list = document.getElementById("list");
+
+                    list.innerHTML = "<h2>Games</h2>";
+
+                    games.forEach(game => {
+
+                        list.innerHTML += `
+                            <a class="item"
+                               href="/games/${game.GameID}">
+                                ${game.GameName}
+                            </a>
+                        `;
+
+                    });
+                });
+        }
+
+    </script>
 
 </body>
+
 </html>

@@ -49,6 +49,32 @@ def create_user():
     }), 201
 
 
+@users_bp.route("/users/<int:user_id>", methods=["GET"])
+def user_page(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT * FROM Users WHERE UserID = %s",
+        (user_id,)
+    )
+
+    user = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if user is None:
+        return "User not found", 404
+
+    return f"""
+        <h1>{user["Username"]}</h1>
+        <p>Email: {user["Email"]}</p>
+        <p>User ID: {user["UserID"]}</p>
+
+        <a href="/">Back to home</a>
+    """
+
 # Website: Add user from HTML form
 @users_bp.route("/users/add", methods=["POST"])
 def add_user():
@@ -58,6 +84,7 @@ def add_user():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
+    # Check for duplicate entries 
     cursor.execute(
         """
         SELECT UserID, Username, Email
@@ -78,14 +105,15 @@ def add_user():
         if existing_user["Email"] == email:
             return "Error: Email already exists", 400
 
+    # Add new user
     cursor = conn.cursor()
 
     cursor.execute(
         """
         INSERT INTO Users (Username, Email)
-        VALUES (%s, %s),
+        VALUES (%s, %s)
+        """,
         (username, email)
-    """
     )
 
     conn.commit()
