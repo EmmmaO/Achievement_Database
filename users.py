@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, redirect
+from flask import Blueprint, json, request, jsonify, redirect, render_template
 from database import get_db_connection
 
 users_bp = Blueprint("users", __name__)
@@ -49,8 +49,37 @@ def create_user():
     }), 201
 
 
+@users_bp.route("/users/<int:user_id>/uachievement", methods=["GET"])
+def user_achievements(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    query = """
+        SELECT 
+            ua.*,
+            a.AchievementName,
+            a.Points,
+            g.GameName 
+          FROM Userachievements ua
+            JOIN Achievements a ON ua.AchievementID = a.AchievementID
+            JOIN Games g ON a.GameID = g.GameID
+        WHERE UserID = %s
+    """
+
+    cursor.execute(query, (user_id,))
+    achievements = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify(achievements)
+
 @users_bp.route("/users/<int:user_id>", methods=["GET"])
 def user_page(user_id):
+    return render_template("userpage.html", user_id=user_id)
+
+@users_bp.route("/api/users/<int:user_id>", methods=["GET"])
+def user_api(user_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -58,7 +87,6 @@ def user_page(user_id):
         "SELECT * FROM Users WHERE UserID = %s",
         (user_id,)
     )
-
     user = cursor.fetchone()
 
     cursor.close()
@@ -67,13 +95,27 @@ def user_page(user_id):
     if user is None:
         return "User not found", 404
 
-    return f"""
-        <h1>{user["Username"]}</h1>
-        <p>Email: {user["Email"]}</p>
-        <p>User ID: {user["UserID"]}</p>
+    # uachievements = user_achievements(user_id)
 
-        <a href="/">Back to home</a>
-    """
+    return jsonify(user)
+
+
+    # return f"""
+    # <h2>User Page for {user['Username']}</h2>
+    # <p>Email: {user['Email']}<br>
+    # UserID: {user['UserID']}<br>
+    # Points: {user['TotalPoints']}</p>
+
+    # <div>
+    #     <h3>Achievements Earned:</h3>
+    #     <ul>
+    #         {{#achievements}}
+    #         <li>{{AchievementName}} (Earned on {{UnlockDate}})</li>
+    #         {{/achievements}}
+    #     </ul>
+    # </div>
+    # """;
+
 
 # Website: Add user from HTML form
 @users_bp.route("/users/add", methods=["POST"])

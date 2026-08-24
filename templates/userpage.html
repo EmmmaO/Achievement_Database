@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>User Page</title>
+</head>
+<body>
+	<div id="userInfo"></div>
+	<div id="gamesOwned"></div>
+	<div id="achievementsEarned"></div>
+</body>
+</html>
+
+<script type="text/javascript">
+	const userid = {{ user_id }}
+
+
+	function showUserInfo(){
+		fetch(`/api/users/${userid}`)
+			.then(response => response.json())
+			.then(user => {
+
+				document.getElementById("userInfo").innerHTML = 
+					"<h2>User Page for " + user.Username + "</h2><br>" +
+					"User ID: " + userid + "<br>" + 
+					"Email: " + user.Email + "<br>" +
+					"Achivements Earned: " + user.TotalPoints;
+			})
+	}
+
+	function showGamesAndAchievements(){
+		fetch(`/users/${userid}/uachievement`)
+			.then(response => response.json())
+			.then(achievements => {
+				let gameslist = document.getElementById("achievementsEarned");
+                gameslist.innerHTML = "<h2>Achievements Earned</h2>";
+                achievements.forEach(achievement => {
+                    gameslist.innerHTML += `
+                    <li>
+						<lu>
+							<a class="item"
+								href="/achivement/${achievement.AchievementID}">
+									 ${achievement.AchievementName}
+							</a>
+						</lu>
+						<lu>
+							<a class="item"
+								href="/games/${achievement.GameID}">
+									 ${achievement.GameName}
+							</a>
+						</lu>
+						<lu> Points worth: ${achievement.Points} </lu>
+						<lu> Received: ${achievement.UnlockDate}</lu>  
+						
+					</li>
+					<br>
+                    `;
+
+                });
+			})
+	}
+
+	showUserInfo();
+	showGamesAndAchievements();
+
+
+</script>
