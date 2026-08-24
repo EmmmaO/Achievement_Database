@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 
 from users import users_bp
 from games import games_bp
@@ -12,11 +12,11 @@ app.register_blueprint(games_bp)
 app.register_blueprint(achievements_bp)
 app.register_blueprint(queries_bp)
 
+
 @app.route("/")
 def home():
-    return {
-        "message": "Big website is up"
-    }
+    return render_template("index.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
