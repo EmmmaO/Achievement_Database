@@ -3,8 +3,8 @@ import mysql.connector as mysql
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "waa",
-    "database": "gamedb"
+    "password": "",
+    "database": "achievementdatabase"
 }
 
 def get_db_connection():
