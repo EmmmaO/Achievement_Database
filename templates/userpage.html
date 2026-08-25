@@ -3,7 +3,7 @@
 <head>
 
 	<style>
-		#achievementsEarned{
+		table{
 			border-style: solid;
 			border-collapse: collapse;
 			width: 50%;
@@ -33,6 +33,16 @@
 	<div id="userInfo"></div>
 	<br>
 
+	<div>
+		<h3>Games Completion percentage:</h3>
+		<table id="gamesCompletion">
+			<tr>
+				<th>Game</th>
+				<th>Completion %</th>
+			</tr>
+		</table>
+	</div>
+
 	<!--- List of all earned achivements by user --->
 	<div>
 		<h3>Earned achievements:</h3>
@@ -43,10 +53,16 @@
 				<th>Points</th>
 				<th>Date Unlocked</th>
 			</tr>
-	</div>
+
+	
 	<!--- Lists all achievements available --->
 	<div>
-		<button style="background-color: rgb(49, 49, 49); color: white; padding: 5px;" onclick="showAchievements()"><b>Add Achievement</b></button>
+		<button style="background-color: rgb(49, 49, 49); 
+						color: white; 
+						padding: 5px;" 
+						onclick="showAllAchievements()">
+			<b>Add Achievement</b>
+		</button>
 		<div id="achievementList" style="float: right; margin-right: 25%;"></div>
 	</div>
 </body>
@@ -57,19 +73,42 @@
 	const userid = "{{ user_id }}"
 
 	function showUserInfo(){
+		let info = document.getElementById("userInfo");
+
 		fetch(`/api/users/${userid}`)
 			.then(response => response.json())
 			.then(user => {
-
-				document.getElementById("userInfo").innerHTML = 
+				info.innerHTML = 
 					"<h2>User Page for " + user.Username + "</h2><br>" +
 					"<b>User ID: </b>" + userid + "<br>" + 
-					"<b>Email: </b>" + user.Email + "<br>" +
-					"<b>Achivements Earned: </b>" + user.TotalPoints;
+					"<b>Email: </b>" + user.Email + "<br>";
 			})
+		fetch(`/users/${userid}/achievement-count`)
+			.then(response => response.json())
+			.then(achievement => {
+				info.innerHTML += " <b>Achievements unlocked: </b> " + achievement.UnlockedAchievements;
+		})
 	}
 
-	function showGamesAndAchievements(){
+	function gameCompletion(){
+		fetch(`/users/${userid}/completion`)
+			.then(response => response.json())
+			.then(games => {
+				let comp = document.getElementById("gamesCompletion");
+
+				games.forEach(game =>{
+					if (game.UnlockedAchievements === 0) return; 
+					comp.innerHTML += `
+						<tr>
+							<td>${game.GameName}</td>
+							<td>${game.UnlockedAchievements / game.TotalAchievements}</td>
+						</tr>
+					`;
+				})
+		});
+	}
+
+	function showUnlockedAchievements(){
 		fetch(`/users/${userid}/uachievement`)
 			.then(response => response.json())
 			.then(achievements => {
@@ -95,7 +134,7 @@
 					</tr>
                     `;
                 });
-				list.innerHTML += "</table>";
+				list.innerHTML += "</table></div>";
 			})
 	}
 
@@ -106,7 +145,7 @@
 			.then()
 	};
 
-	function showAchievements()
+	function showAllAchievements()
 	{
 		fetch(`/achievements`)
 			.then(response => response.json())
@@ -133,7 +172,8 @@
 	};
 
 	showUserInfo();
-	showGamesAndAchievements();
+	gameCompletion();	
+	showUnlockedAchievements();
 
 
 </script>
