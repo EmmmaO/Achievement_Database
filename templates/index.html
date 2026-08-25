@@ -98,6 +98,12 @@
 
     </div>
 
+    <br>
+
+    <!--- Leader Board --->
+    <div id="leaderBoard">
+        <h1 style="color: gold;"><b>Leaderboard Top 5</b></h1>
+    </div>
 
     <!-- Add forms -->
 
@@ -272,6 +278,25 @@
                     });
                 });
         }
+
+        function LeaderBoard() {
+            fetch(`/leaderboard`)
+            .then(response=>response.json())
+            .then(result => {
+                list = document.getElementById("leaderBoard");
+                list.innerHTML += `
+                <ol style="color: gold;"><h2>${result[0].Username} ${result[0].TotalPoints}</h2></li>
+                `;
+                    
+                for(let i = 1; i < 5; i++) {
+                    list.innerHTML += `
+                        <ol>${result[i].Username} ${result[i].TotalPoints}</li>
+                    
+                    `;
+                }
+            })
+        }
+        LeaderBoard();
 
     </script>
 
