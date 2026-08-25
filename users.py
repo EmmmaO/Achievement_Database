@@ -59,7 +59,8 @@ def user_achievements(user_id):
             ua.*,
             a.AchievementName,
             a.Points,
-            g.GameName 
+            g.GameName,
+            g.GameID
           FROM Userachievements ua
             JOIN Achievements a ON ua.AchievementID = a.AchievementID
             JOIN Games g ON a.GameID = g.GameID

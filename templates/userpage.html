@@ -44,15 +44,17 @@
 				<th>Date Unlocked</th>
 			</tr>
 	</div>
+	<!--- Lists all achievements available --->
 	<div>
-	<button style="background-color: rgb(49, 49, 49); color: white; padding: 5px;" onclick="addAchievement()"><b>Add Achievement</b></button>
+		<button style="background-color: rgb(49, 49, 49); color: white; padding: 5px;" onclick="addAchievement()"><b>Add Achievement</b></button>
+		<div id="achievementList" style="float: right; margin-right: 25%;"></div>
 	</div>
 </body>
 </html>
 
 <script type="text/javascript">
-	const userid = {{ user_id }}
 
+	const userid = "{{ user_id }}"
 
 	function showUserInfo(){
 		fetch(`/api/users/${userid}`)
@@ -78,7 +80,7 @@
                     <tr>
 						<td>
 							<a class="item"
-								href="/achivement/${achievement.AchievementID}">
+								href="/achivements/${achievement.AchievementID}">
 									 ${achievement.AchievementName}
 							</a>
 						</td>
@@ -92,7 +94,6 @@
 						<td> ${achievement.UnlockDate}</td>  
 					</tr>
                     `;
-
                 });
 				list.innerHTML += "</table>";
 			})
@@ -100,7 +101,30 @@
 
 	function addAchievement()
 	{
+		fetch(`/achievements`)
+			.then(response => response.json())
+			.then(achievements => {
+			
+			achievements.forEach(achievement => {
+				let list = document.getElementById("achievementList");
 
+				list.innerHTML += `
+							<a class="item"
+							   href="/achievements/${achievement.AchievementID}">
+								${achievement.AchievementName}
+							</a>
+							<br>
+							Game: ${achievement.GameName}
+							<br>
+							Points: ${achievement.Points}
+						</p
+					</div>
+				`;
+
+			});
+
+		});
+				
 	};
 
 	showUserInfo();
