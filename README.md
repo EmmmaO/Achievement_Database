@@ -33,44 +33,7 @@ python -m venv .venv
 
 ### Create the database
 
-```sql
-CREATE DATABASE AchievementDatabase;
-```
-
-### Create the tables
-
-```sql
-CREATE TABLE Users (
-    UserID INT AUTO_INCREMENT PRIMARY KEY,
-    Username VARCHAR(100) NOT NULL,
-    Email VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE Games (
-    GameID INT AUTO_INCREMENT PRIMARY KEY,
-    GameName VARCHAR(100) NOT NULL,
-    Genre VARCHAR(100),
-    ReleaseDate DATE
-);
-
-CREATE TABLE Achievements (
-    AchievementID INT AUTO_INCREMENT PRIMARY KEY,
-    GameID INT NOT NULL,
-    AchievementName VARCHAR(255) NOT NULL,
-    Description TEXT,
-    Points INT NOT NULL,
-    FOREIGN KEY (GameID) REFERENCES Games(GameID)
-);
-
-CREATE TABLE UserAchievements (
-    UserID INT NOT NULL,
-    AchievementID INT NOT NULL,
-    UnlockDate DATE,
-    PRIMARY KEY (UserID, AchievementID),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (AchievementID) REFERENCES Achievements(AchievementID)
-);
-```
+Run the setup.sql in your graphical user interface for MySQL
 
 ### Configure MySQL
 
