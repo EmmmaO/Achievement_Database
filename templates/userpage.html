@@ -1,14 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+	<style>
+		#achievementsEarned{
+			border-style: solid;
+			border-collapse: collapse;
+			width: 50%;
+		}	
+		th{
+			background-color: rgb(238, 121, 121);
+			text-align: left;
+			padding: 10px;
+		}
+		td{
+			padding: 10px;
+		}
+		tbody:nth-child(odd){
+			background-color: rgb(249, 225, 225);
+		}
+
+
+	</style>
+
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>User Page</title>
 </head>
 <body>
+
+	<!--- Shows User Info --->
 	<div id="userInfo"></div>
-	<div id="gamesOwned"></div>
-	<div id="achievementsEarned"></div>
+	<br>
+
+	<!--- List of all earned achivements by user --->
+	<div>
+		<h3>Earned achievements:</h3>
+		<table id="achievementsEarned">			
+			<tr>
+				<th>Achivement</th>
+				<th>Game</th>
+				<th>Points</th>
+				<th>Date Unlocked</th>
+			</tr>
+	</div>
+	<div>
+	<button style="background-color: rgb(49, 49, 49); color: white; padding: 5px;" onclick="addAchievement()"><b>Add Achievement</b></button>
+	</div>
 </body>
 </html>
 
@@ -23,9 +61,9 @@
 
 				document.getElementById("userInfo").innerHTML = 
 					"<h2>User Page for " + user.Username + "</h2><br>" +
-					"User ID: " + userid + "<br>" + 
-					"Email: " + user.Email + "<br>" +
-					"Achivements Earned: " + user.TotalPoints;
+					"<b>User ID: </b>" + userid + "<br>" + 
+					"<b>Email: </b>" + user.Email + "<br>" +
+					"<b>Achivements Earned: </b>" + user.TotalPoints;
 			})
 	}
 
@@ -33,33 +71,37 @@
 		fetch(`/users/${userid}/uachievement`)
 			.then(response => response.json())
 			.then(achievements => {
-				let gameslist = document.getElementById("achievementsEarned");
-                gameslist.innerHTML = "<h2>Achievements Earned</h2>";
+				let list = document.getElementById("achievementsEarned");
+
                 achievements.forEach(achievement => {
-                    gameslist.innerHTML += `
-                    <li>
-						<lu>
+                    list.innerHTML += `
+                    <tr>
+						<td>
 							<a class="item"
 								href="/achivement/${achievement.AchievementID}">
 									 ${achievement.AchievementName}
 							</a>
-						</lu>
-						<lu>
+						</td>
+						<td>
 							<a class="item"
 								href="/games/${achievement.GameID}">
 									 ${achievement.GameName}
 							</a>
-						</lu>
-						<lu> Points worth: ${achievement.Points} </lu>
-						<lu> Received: ${achievement.UnlockDate}</lu>  
-						
-					</li>
-					<br>
+						</td>
+						<td> ${achievement.Points} </td>
+						<td> ${achievement.UnlockDate}</td>  
+					</tr>
                     `;
 
                 });
+				list.innerHTML += "</table>";
 			})
 	}
+
+	function addAchievement()
+	{
+
+	};
 
 	showUserInfo();
 	showGamesAndAchievements();
