@@ -46,7 +46,7 @@
 	</div>
 	<!--- Lists all achievements available --->
 	<div>
-		<button style="background-color: rgb(49, 49, 49); color: white; padding: 5px;" onclick="addAchievement()"><b>Add Achievement</b></button>
+		<button style="background-color: rgb(49, 49, 49); color: white; padding: 5px;" onclick="showAchievements()"><b>Add Achievement</b></button>
 		<div id="achievementList" style="float: right; margin-right: 25%;"></div>
 	</div>
 </body>
@@ -101,30 +101,35 @@
 
 	function addAchievement()
 	{
+		fetch("/users/${userid}/achievements/${achievement.AchievementID}")
+			.then(response => response.json())
+			.then()
+	};
+
+	function showAchievements()
+	{
 		fetch(`/achievements`)
 			.then(response => response.json())
 			.then(achievements => {
 			
 			achievements.forEach(achievement => {
 				let list = document.getElementById("achievementList");
-
-				list.innerHTML += `
-							<a class="item"
-							   href="/achievements/${achievement.AchievementID}">
-								${achievement.AchievementName}
-							</a>
-							<br>
-							Game: ${achievement.GameName}
-							<br>
-							Points: ${achievement.Points}
-						</p
-					</div>
-				`;
-
-			});
-
-		});
 				
+				list.innerHTML += `
+					<form action="/users/${userid}/achievements/${achievement.AchievementID}" method="POST"
+					// <input type="hidden" value="${userid}">
+					// <input type="hidden" value="${achievement.AchievementID}"
+					<label for="add">
+						Achievement: ${achievement.AchievementName}<br>
+						Game: ${achievement.GameName}<br>
+						Points: ${achievement.Points}<br>
+						<input type="submit">
+					</form
+					<br>
+				</div>
+				`;
+			})
+		});
 	};
 
 	showUserInfo();
