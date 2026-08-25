@@ -81,7 +81,8 @@
 				info.innerHTML = 
 					"<h2>User Page for " + user.Username + "</h2><br>" +
 					"<b>User ID: </b>" + userid + "<br>" + 
-					"<b>Email: </b>" + user.Email + "<br>";
+					"<b>Email: </b>" + user.Email + "<br>" +
+					"<b>Total Points: </b>" + user.TotalPoints + "<br>";
 			})
 		fetch(`/users/${userid}/achievement-count`)
 			.then(response => response.json())
