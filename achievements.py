@@ -122,9 +122,7 @@ def unlock_achievement(user_id, achievement_id):
         cursor.close()
         conn.close()
 
-        return jsonify({
-            "error": str(e)
-        }), 400
+        return redirect("/users/"+str(user_id))
 
     cursor.close()
     conn.close()
