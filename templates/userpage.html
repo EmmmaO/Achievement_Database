@@ -29,6 +29,10 @@
 </head>
 <body>
 
+	<div>
+		<button><a href="/">Home</a></button>
+	</div>
+
 	<!--- Shows User Info --->
 	<div id="userInfo"></div>
 	<br>
@@ -39,6 +43,7 @@
 			<tr>
 				<th>Game</th>
 				<th>Completion %</th>
+				<th>Total</th>
 			</tr>
 		</table>
 	</div>
@@ -102,7 +107,8 @@
 					comp.innerHTML += `
 						<tr>
 							<td>${game.GameName}</td>
-							<td>${game.UnlockedAchievements / game.TotalAchievements}</td>
+							<td>${game.CompletionPercent}</td>
+							<td>${game.UnlockedAchievements} / ${game.TotalAchievements}</td>
 						</tr>
 					`;
 				})
@@ -120,7 +126,7 @@
                     <tr>
 						<td>
 							<a class="item"
-								href="/achivements/${achievement.AchievementID}">
+								href="/achievements/${achievement.AchievementID}">
 									 ${achievement.AchievementName}
 							</a>
 						</td>

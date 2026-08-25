@@ -66,6 +66,34 @@ def create_achievement():
         "AchievementID": achievement_id
     }), 201
 
+@achievements_bp.route("/achievements/<int:achievement_id>", methods = ["GET"])
+def achievement_info(achievement_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute( """
+        SELECT a.*, g.GameName 
+        FROM Achievements a
+        JOIN Games g ON g.GameID = a.GameID
+        WHERE AchievementID = %s
+    """, (achievement_id,))
+
+    info = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+ 
+    return f"""
+        <h1>{info["AchievementName"]}</h1>
+        <p>Game: {info["GameName"]}</p>
+        <p>Description: {info["Description"]}</p>
+        <p>Points: {info["Points"]}</p>
+        <p>ID: {info["AchievementID"]}</p>
+
+        <a href="/">Back to home</a>
+    """
+
 
 @achievements_bp.route("/users/<int:user_id>/achievements/<int:achievement_id>", methods=["POST"])
 def unlock_achievement(user_id, achievement_id):
