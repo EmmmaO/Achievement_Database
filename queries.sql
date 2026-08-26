@@ -37,3 +37,21 @@ SELECT
     JOIN Achievements a ON ua.AchievementID = a.AchievementID
     JOIN Games g ON a.GameID = g.GameID
     GROUP BY u.UserID, g.GameID;
+
+-- Trigger for updating User Table when UserAchievement Table has been inserted into --
+DELIMITER $$
+CREATE TRIGGER UpdateTotalPoints
+AFTER INSERT ON UserAchievements
+FOR EACH ROW
+BEGIN
+    UPDATE Users
+    SET TotalPoints = TotalPoints +
+    (
+        SELECT Points
+        FROM Achievements
+        WHERE AchievementID = NEW.AchievementID
+    )
+    WHERE UserID = NEW.UserID;
+END$$
+
+DELIMITER ;
